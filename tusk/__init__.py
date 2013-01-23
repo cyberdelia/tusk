@@ -33,7 +33,7 @@ class Lock(object):
             cursor.close()
 
     def key(self, name):
-        i = binascii.crc32(name)
+        i = binascii.crc32(name.encode('utf-8'))
         if i > 2147483647:
             return -(-(i) & 0xffffffff)
         return i
