@@ -15,7 +15,9 @@ Usage
 
 Tusk tries to be as simple as possible ::
 
-    l = Lock("postgres://localhost/noclue")
-    l.acquire("inspector", blocking=True)
-    l.release("inspector")
+    l = Lock("inspector", "postgres://localhost/noclue")
+    l.acquire(blocking=True)
+    l.release()
+    with l:
+        process()
 
