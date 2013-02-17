@@ -1,5 +1,6 @@
 # -*- coding: utf-8  -*-
 import binascii
+import os
 import psycopg2
 
 from contextlib import contextmanager
@@ -15,7 +16,10 @@ class TuskException(Exception):
 
 
 class Lock(object):
-    def __init__(self, name, dsn):
+    def __init__(self, name, dsn=None):
+        dsn = dsn or os.environ.get('DATABASE_URL')
+        if dsn is None:
+            raise ValueError("You must specify a DSN.")
         params = urlparse(dsn)
         self.conn = psycopg2.connect(database=params.path[1:], user=params.username,
                                      password=params.password, host=params.hostname,
