@@ -23,6 +23,24 @@ class TuskTest(TestCase):
             self.assertTrue(not self.latter.acquire(blocking=False))
         self.assertTrue(self.latter.acquire(blocking=False))
 
+    def test_unlock_unheld_lock(self):
+        self.assertFalse(self.former.release())
+        self.former.acquire()
+        self.assertTrue(self.former.release())
+        self.assertFalse(self.former.release())
+
+    def test_consecutive_acquire(self):
+        # If a session already holds a given advisory lock,
+        # additional requests by it will always succeed,
+        # even if other sessions are awaiting the lock
+        self.former.acquire()
+        self.assertTrue(self.former.acquire())
+        self.assertTrue(not self.latter.acquire(blocking=False))
+        self.assertTrue(self.former.release())
+        self.assertTrue(self.former.release())
+        self.assertFalse(self.former.release())
+        self.assertTrue(self.latter.acquire(blocking=False))
+
     def tearDown(self):
         self.former.release()
         self.latter.release()
